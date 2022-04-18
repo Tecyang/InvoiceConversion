@@ -1,7 +1,7 @@
 import sys
 import os
 import getopt
-import logging
+import json
 from InvoiceConversionOperation import InvoiceConversionOperation
 
 import PdfToImg
@@ -33,7 +33,7 @@ class InvoiceConversion:
                 success = success + 1
                 print("发票{}成功".format(invoice))
             else:
-                fail = fail+1
+                fail = fail + 1
                 print("发票{}失败".format(invoice))
         print("结束处理要放到word的发票,共计{}个,成功{}个，失败{}个".format(
             len(self.invoices), success, fail))
@@ -59,7 +59,12 @@ class InvoiceConversion:
             print("op is {} value is {} args is {}".format(op, value, args))
             if op == "-o":
                 self.operation = value
-                if InvoiceConversionOperation.IMG_FILL_WORD.value == self.operation:
+                if InvoiceConversionOperation.PDF_TO_IMG.value == self.operation:
+                    if len(args) > 0:
+                        args = json.loads(str(args[0])
+                        self.pdfPath = args['pdfPath']
+                        self.imagePath = args['imgPath']
+                elif InvoiceConversionOperation.IMG_FILL_WORD.value == self.operation:
                     self.invoices.append(args[0])
             elif op == "-h":
                 self.usage()
