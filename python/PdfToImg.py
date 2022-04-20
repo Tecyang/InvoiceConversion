@@ -9,8 +9,9 @@ def pyMuPDF_findPDF(pdfPath, imagePath):
     print("处理目录{}下的pdf,目标目录{}".format(pdfPath, imagePath))
 
     for file in os.listdir(pdfPath):
+        print("处理文件{}".format(file))
         file = os.path.join(pdfPath, file)
-        print(file)
+        # print(file)
         # 判断当前目录是否为文件夹
         if os.path.isfile(file):
             # 进行转换
@@ -18,8 +19,8 @@ def pyMuPDF_findPDF(pdfPath, imagePath):
 
 
 def pyMuPDF_fitz(pdfPath, pdfFilePath, imagePath):
-    startTime_pdf2img = datetime.datetime.now()  # 开始时间
-    print("imagePath=" + imagePath)
+    # startTime_pdf2img = datetime.datetime.now()  # 开始时间
+    # print("imagePath=" + imagePath)
     pdfDoc = fitz.open(pdfFilePath)
     for pg in range(pdfDoc.pageCount):
         page = pdfDoc[pg]
@@ -43,8 +44,8 @@ def pyMuPDF_fitz(pdfPath, pdfFilePath, imagePath):
             pix.writePNG(imagePath + '/' + str(pdfFilePath).replace(
                 pdfPath, '').replace('.pdf', '_%s.png' % pg))
 
-    endTime_pdf2img = datetime.datetime.now()  # 结束时间
-    print('pdf2img时间=', (endTime_pdf2img - startTime_pdf2img).seconds)
+    # endTime_pdf2img = datetime.datetime.now()  # 结束时间
+    # print('pdf2img时间=', (endTime_pdf2img - startTime_pdf2img).seconds)
 
 
 if __name__ == "__main__":
