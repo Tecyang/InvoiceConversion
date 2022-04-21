@@ -1,4 +1,3 @@
-import datetime
 from email.mime import image
 import os
 
@@ -6,21 +5,22 @@ import fitz  # fitz就是pip install PyMuPDF
 
 
 def pyMuPDF_findPDF(pdfPath, imagePath):
-    print("处理目录{}下的pdf,目标目录{}".format(pdfPath, imagePath))
+    print(u"处理目录{}下的pdf,目标目录{}".format(pdfPath, imagePath))
 
-    for file in os.listdir(pdfPath):
-        print("处理文件{}".format(file))
-        file = os.path.join(pdfPath, file)
-        # print(file)
-        # 判断当前目录是否为文件夹
-        if os.path.isfile(file):
-            # 进行转换
-            pyMuPDF_fitz(pdfPath, file, imagePath)
+    if os.path.exists(pdfPath) and os.path.exists(imagePath):
+        for file in os.listdir(pdfPath):
+            print(u"处理文件{}".format(file))
+            file = os.path.join(pdfPath, file)
+            # print(file)
+            # 判断当前目录是否为文件夹
+            if os.path.isfile(file):
+                # 进行转换
+                pyMuPDF_fitz(pdfPath, file, imagePath)
 
 
 def pyMuPDF_fitz(pdfPath, pdfFilePath, imagePath):
     # startTime_pdf2img = datetime.datetime.now()  # 开始时间
-    # print("imagePath=" + imagePath)
+    # print(u"imagePath=" + imagePath)
     pdfDoc = fitz.open(pdfFilePath)
     for pg in range(pdfDoc.pageCount):
         page = pdfDoc[pg]

@@ -2,6 +2,7 @@
 
 process.env.NODE_ENV = 'production'
 
+const Multispinner = require('multispinner')
 const { say } = require('cfonts')
 const chalk = require('chalk')
 const del = require('del')
@@ -42,7 +43,7 @@ async function build () {
 
   let results = ''
 
-  const tasks = new Listr(
+  const tasks2 = new Listr(
     [
       {
         title: 'building master process',
@@ -74,7 +75,7 @@ async function build () {
     { concurrent: 2 }
   )
 
-  await tasks
+  await tasks2
     .run()
     .then(() => {
       process.stdout.write('\x1B[2J\x1B[0f')
@@ -99,10 +100,10 @@ function pack (config) {
           chunks: false,
           colors: true
         })
-        .split(/\r?\n/)
-        .forEach(line => {
-          err += `    ${line}\n`
-        })
+          .split(/\r?\n/)
+          .forEach(line => {
+            err += `    ${line}\n`
+          })
 
         reject(err)
       } else {

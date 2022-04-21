@@ -1,13 +1,15 @@
 import sys
+import io
 import os
 import getopt
 import json
 
-from MySQLdb import Date
 from InvoiceConversionOperation import InvoiceConversionOperation
-
 import PdfToImg
 import OperationWord
+
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer,
+                              encoding='utf-8')  #改变标准输出的默认编码
 
 
 class InvoiceConversion:
@@ -27,30 +29,30 @@ class InvoiceConversion:
         doc = OperationWord.opWord(self.wordPath, self.wordName)
         success = 0
         fail = 0
-        print("开始处理要放到word的发票,共计{}个".format(len(self.invoices)))
+        print(u"开始处理要放到word的发票,共计{}个".format(len(self.invoices)))
         if len(self.invoices) > 0:
             for invoice in self.invoices:
-                print("正在查找发票图片{}".format(invoice))
+                print(u"正在查找发票图片{}".format(invoice))
                 imgs = self.checkImgExist(invoice)
-                print("查找发票图片结果{}".format(imgs))
+                print(u"查找发票图片结果{}".format(imgs))
                 if len(imgs) > 0:
                     OperationWord.addPicAndTitle(self.wordPath, self.wordName,
                                                  doc, invoice, imgs)
                     success = success + 1
-                    print("发票{}成功".format(invoice))
+                    print(u"发票{}成功".format(invoice))
                 else:
                     fail = fail + 1
-                    print("发票{}失败".format(invoice))
-        print("结束处理要放到word的发票,共计{}个,成功{}个，失败{}个".format(
+                    print(u"发票{}失败".format(invoice))
+        print(u"结束处理要放到word的发票,共计{}个,成功{}个，失败{}个".format(
             len(self.invoices), success, fail))
-        print("word文件路径为{}".format(
+        print(u"word文件路径为{}".format(
             os.path.abspath(os.path.join(self.wordPath, self.wordName))))
 
     def checkImgExist(self, invoiceNo):
         # imgs = os.path.join(self.imagePath,invoiceNo)
         imgs = []
         invoiceNo = str(invoiceNo).replace(' ', '')
-        if invoiceNo is '':
+        if invoiceNo == '':
             return []
         for dirpath, dirnames, filenames in os.walk(self.imagePath):
             for filename in filenames:
@@ -66,8 +68,8 @@ class InvoiceConversion:
         opts, args = getopt.getopt(sys.argv[1:], "ho:")
 
         for op, value in opts:
-            print("op is {} value is {} args is {}".format(op, value, args))
-            print(op + ' ' + value + ' {}'.format(args))
+            # print(u"op is {} value is {} args is {}".format(op, value, args))
+            # print(op + ' ' + value + ' {}'.format(args))
             if op == "-o":
                 self.operation = value
                 if len(args) > 0:
@@ -81,13 +83,12 @@ class InvoiceConversion:
                     self.invoiceNo = args1['invoiceNo']
                     if len(args1['invoiceNos']) > 0:
                         self.invoices = str(args1['invoiceNos']).split(',')
-
             elif op == "-h":
                 self.usage()
                 sys.exit()
 
     def usage(self):
-        print("""
+        print(u"""
         发票转换脚本
         参数说明：
           -o:
@@ -101,7 +102,6 @@ if __name__ == '__main__':
 
     conversion = InvoiceConversion()
     conversion.init()
-
     # print(conversion.operation)
     # 发票转图片
     if InvoiceConversionOperation.PDF_TO_IMG.value == conversion.operation:
