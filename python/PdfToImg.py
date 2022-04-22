@@ -1,15 +1,17 @@
 from email.mime import image
 import os
+import sys
 
-import fitz  # fitz就是pip install PyMuPDF
+import fitz
+from CodeMessage import codeMessage
 
 
 def pyMuPDF_findPDF(pdfPath, imagePath):
-    print(u"处理目录{}下的pdf,目标目录{}".format(pdfPath, imagePath))
+    codeMessage("处理目录{}下的pdf,目标目录{}".format(pdfPath, imagePath))
 
     if os.path.exists(pdfPath) and os.path.exists(imagePath):
         for file in os.listdir(pdfPath):
-            print(u"处理文件{}".format(file))
+            print("处理文件{}".format(file))
             file = os.path.join(pdfPath, file)
             # print(file)
             # 判断当前目录是否为文件夹
@@ -20,7 +22,7 @@ def pyMuPDF_findPDF(pdfPath, imagePath):
 
 def pyMuPDF_fitz(pdfPath, pdfFilePath, imagePath):
     # startTime_pdf2img = datetime.datetime.now()  # 开始时间
-    # print(u"imagePath=" + imagePath)
+    # codeMessage("imagePath=" + imagePath)
     pdfDoc = fitz.open(pdfFilePath)
     for pg in range(pdfDoc.pageCount):
         page = pdfDoc[pg]
@@ -29,19 +31,19 @@ def pyMuPDF_fitz(pdfPath, pdfFilePath, imagePath):
         # 此处若是不做设置，默认图片大小为：792X612, dpi=96
         zoom_x = 1.33333333  # (1.33333333-->1056x816)   (2-->1584x1224)
         zoom_y = 1.33333333
-        mat = fitz.Matrix(zoom_x, zoom_y).preRotate(rotate)
-        pix = page.getPixmap(matrix=mat, alpha=False)
+        mat = fitz.Matrix(zoom_x, zoom_y).prerotate(rotate)
+        pix = page.get_pixmap(matrix=mat, alpha=False)
 
         if not os.path.exists(imagePath):  # 判断存放图片的文件夹是否存在
             os.makedirs(imagePath)  # 若图片文件夹不存在就创建
 
             # 将图片写入指定的文件夹内
         if pg == 0:
-            pix.writePNG(
+            pix.save(
                 imagePath + '/' +
                 str(pdfFilePath).replace(pdfPath, '').replace('pdf', 'png'))
         else:
-            pix.writePNG(imagePath + '/' + str(pdfFilePath).replace(
+            pix.save(imagePath + '/' + str(pdfFilePath).replace(
                 pdfPath, '').replace('.pdf', '_%s.png' % pg))
 
     # endTime_pdf2img = datetime.datetime.now()  # 结束时间
