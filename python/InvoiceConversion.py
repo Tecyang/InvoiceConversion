@@ -1,14 +1,15 @@
 import sys
-import subprocess
 import io
 import os
 import getopt
 import json
 
 from InvoiceConversionOperation import InvoiceConversionOperation
-from CodeMessage import codeMessage
 import PdfToImg
 import OperationWord
+
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer,
+                              encoding='utf-8')  #改变标准输出的默认编码
 
 
 class InvoiceConversion:
@@ -16,9 +17,9 @@ class InvoiceConversion:
     # 定义操作
     operation = None
     # 1、PDF地址
-    pdfPath = '../发票'
+    pdfPath = './发票'
     # 2、需要储存图片的目录
-    imagePath = '../imgs'
+    imagePath = './imgs'
     wordPath = './'
     invoiceNo = ''
     invoices = []
@@ -28,23 +29,23 @@ class InvoiceConversion:
         doc = OperationWord.opWord(self.wordPath, self.wordName)
         success = 0
         fail = 0
-        codeMessage("开始处理要放到word的发票,共计{}个".format(len(self.invoices)))
+        print(u"开始处理要放到word的发票,共计{}个".format(len(self.invoices)))
         if len(self.invoices) > 0:
             for invoice in self.invoices:
-                codeMessage("正在查找发票图片{}".format(invoice))
+                print(u"正在查找发票图片{}".format(invoice))
                 imgs = self.checkImgExist(invoice)
-                codeMessage("查找发票图片结果{}".format(imgs))
+                print(u"查找发票图片结果{}".format(imgs))
                 if len(imgs) > 0:
                     OperationWord.addPicAndTitle(self.wordPath, self.wordName,
                                                  doc, invoice, imgs)
                     success = success + 1
-                    codeMessage("发票{}成功".format(invoice))
+                    print(u"发票{}成功".format(invoice))
                 else:
                     fail = fail + 1
-                    codeMessage("发票{}失败".format(invoice))
-        codeMessage("结束处理要放到word的发票,共计{}个,成功{}个，失败{}个".format(
+                    print(u"发票{}失败".format(invoice))
+        print(u"结束处理要放到word的发票,共计{}个,成功{}个，失败{}个".format(
             len(self.invoices), success, fail))
-        codeMessage("word文件路径为{}".format(
+        print(u"word文件路径为{}".format(
             os.path.abspath(os.path.join(self.wordPath, self.wordName))))
 
     def checkImgExist(self, invoiceNo):
@@ -67,7 +68,7 @@ class InvoiceConversion:
         opts, args = getopt.getopt(sys.argv[1:], "ho:")
 
         for op, value in opts:
-            # codeMessage("op is {} value is {} args is {}".format(op, value, args))
+            # print(u"op is {} value is {} args is {}".format(op, value, args))
             # print(op + ' ' + value + ' {}'.format(args))
             if op == "-o":
                 self.operation = value
@@ -87,7 +88,7 @@ class InvoiceConversion:
                 sys.exit()
 
     def usage(self):
-        codeMessage("""
+        print(u"""
         发票转换脚本
         参数说明：
           -o:
